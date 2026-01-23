@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import buildApp from './app'
-import { connectMongo, initCollections, initIndexes } from '../shared/config/MongoDataSource'
+import { connectDatabase } from '../shared/config/DataSource'
 
 dotenv.config()
 
@@ -8,12 +8,10 @@ const PORT = Number(process.env.PORT) || 3003
 
 async function bootstrap() {
   try {
-    const db = await connectMongo()    
+    connectDatabase()    
     console.log('✅ Database connected')
-    
-    await initCollections(db)
-    await initIndexes(db)
     const app = await buildApp()
+
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🚀 Server running on port ${PORT}`)
     })

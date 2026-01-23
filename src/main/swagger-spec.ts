@@ -1,24 +1,16 @@
-import path from 'node:path';
 import swaggerJsdoc from 'swagger-jsdoc';
 
-const options: swaggerJsdoc.Options = {
+const options = {
   definition: {
-    openapi: '3.0.0',
+    openapi: '3.0.3',
     info: {
-      title: 'API-Pokedex',
+      title: 'Pokedéx UNIFOR',
       version: '1.0.0',
-      description: 'Documentação da API gerada automaticamente com Swagger',
     },
-    servers: [
-      {
-        url: 'http://localhost:8080',
-        description: 'Servidor de Desenvolvimento',
-      },
-    ],
+    servers: [{ url: `http://localhost:8080` }],
   },
-
-  apis: ['./src/**/*.ts']
-};
+  apis: ['./src/shared/docs/**/*.yaml'],
+}
 
 const swaggerSpec = swaggerJsdoc(options);
 
