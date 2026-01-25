@@ -17,7 +17,7 @@ export class UserMapper {
     entity.id = user.id
     entity.name = user.getName()
     entity.email = user.getEmail()
-    entity.passwordHash = (user as any).passwordHash // ver nota abaixo
+    entity.passwordHash = (user as any).passwordHash 
     entity.createdAt = user.createdAt
     return entity
   }

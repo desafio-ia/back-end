@@ -1,5 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
+
 type UserProps = {
-  id: string
+  id?: string
   name: string
   email: string
   passwordHash: string
@@ -14,10 +16,6 @@ export class User {
   public readonly createdAt: Date
 
   constructor(props: UserProps) {
-    if (!props.id) {
-      throw new Error('User id is required')
-    }
-
     if (!props.name || props.name.trim().length < 3) {
       throw new Error('User name must have at least 3 characters')
     }
@@ -26,11 +24,7 @@ export class User {
       throw new Error('Invalid email')
     }
 
-    if (!props.passwordHash || props.passwordHash.length < 60) {
-      throw new Error('Invalid password hash')
-    }
-
-    this.id = props.id
+    this.id = props.id ?? uuidv4();
     this.name = props.name.trim()
     this.email = props.email.toLowerCase()
     this.passwordHash = props.passwordHash
@@ -46,10 +40,6 @@ export class User {
   }
 
   changePassword(newPasswordHash: string) {
-    if (!newPasswordHash || newPasswordHash.length < 60) {
-      throw new Error('Invalid password hash')
-    }
-
     if (newPasswordHash === this.passwordHash) {
       throw new Error('New password must be different from the old one')
     }
@@ -63,6 +53,10 @@ export class User {
 
   getEmail(): string {
     return this.email
+  }
+
+  getPassword(): string {
+    return this.passwordHash
   }
 
   private isValidEmail(email: string): boolean {

@@ -14,6 +14,8 @@ export class TypeOrmUserRepository implements UserRepository {
 
   async save(user: User): Promise<void> {
     const entity = UserMapper.toPersistence(user)
+
+    console.log(entity)
     await this.ormRepository.save(entity)
   }
 
