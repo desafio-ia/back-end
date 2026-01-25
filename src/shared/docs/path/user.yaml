@@ -1,0 +1,111 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+  description: API para gerenciamento de usuários
+
+paths:
+  /user:
+    post:
+      summary: Create a new user
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              # Referência local simples
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        201:
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        400:
+          description: Invalid input or email already in use
+
+  /user/{id}:
+    get:
+      summary: Get user by id
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        404:
+          description: User not found
+
+  /user/{id}/name:
+    patch:
+      summary: Change user name
+      tags:
+        - User
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeUserNameRequest'
+      responses:
+        204:
+          description: User name updated successfully
+        400:
+          description: Invalid input
+        404:
+          description: User not found
+          
+components:
+  schemas:
+    UserResponse:
+      type: object
+      properties:
+        id: 
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+
+    CreateUserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    ChangeUserNameRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
