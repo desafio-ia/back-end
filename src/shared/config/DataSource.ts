@@ -1,6 +1,9 @@
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
-import { UserOrmEntity } from 'modules/user/infra/user.orm-entity'
+import { UserOrmEntity } from '../../modules/user/infra/user.orm-entity'
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 function getEnv(name: string): string {
   const value = process.env[name]
