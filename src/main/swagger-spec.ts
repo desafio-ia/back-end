@@ -9,7 +9,10 @@ const options = {
     },
     servers: [{ url: `http://localhost:8080` }],
   },
-  apis: ['./src/shared/docs/**/*.yaml'],
+  apis: [
+    './src/shared/docs/path/*.yaml',
+    './src/shared/docs/schemas/*schema.yaml'
+  ]
 }
 
 const swaggerSpec = swaggerJsdoc(options);
