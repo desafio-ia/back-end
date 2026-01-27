@@ -14,7 +14,6 @@ export class BcryptProvider implements BcryptProviderPort {
         return value;
     }
 
-
     public async hash(password: string): Promise<string> {
         const rounds = Number(this.getEnv('BCRYPT_ROUNDS') || 10); 
         const salt = await genSalt(rounds);

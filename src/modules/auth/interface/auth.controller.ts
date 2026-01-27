@@ -1,6 +1,5 @@
 import { Request, Response } from 'express'; // Ou do seu framework
 import { AuthService } from '../application/auth.service';
-import { ref } from 'node:process';
 
 export class AuthController {
 
@@ -67,7 +66,7 @@ export class AuthController {
                 error_mensage +=  !userId? 'User id is required;' : ''
                 return res.status(400).json({ error:"Erro:" + error_mensage });
             }  
-            
+
             const tokens = await this.authService.refreshToken(userId, refreshToken);
             return res.status(200).json(tokens);
 
@@ -75,4 +74,33 @@ export class AuthController {
             return res.status(401).json({ error: error.message });
         }
     }
+
+
+    public async requestPasswordRecovery(req: Request, res: Response) {
+        const { email } = req.body;
+        if(!email) {return res.status(400).json({ error:"Email is required"})};
+
+        try {
+            await this.authService.requestPasswordRecovery(email);
+            return res.status(200).json({ ok: true });
+        } catch(error: any) {
+            return res.status(200).json({ error: error.message });
+        }
+    }
+
+    public async resetPassword(req: Request, res: Response) {
+        const {email, token, newPassword} = req.body;
+
+        if(!email) {return res.status(400).json({ error:"Email is required"})};
+        if(!token) {return res.status(400).json({ error:"token is required"})};
+        if(!newPassword) {return res.status(400).json({ error:"Password is required"})};
+
+        try {
+            await this.authService.resetPassword({email, token, newPassword});
+            return res.status(200).json({ ok: true });
+        } catch(error: any) {
+            return res.status(200).json({ error: error.message });
+        }
+    }
+
 }

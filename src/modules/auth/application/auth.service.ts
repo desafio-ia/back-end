@@ -4,6 +4,8 @@ import { AuthConfig } from "../domain/AuthConfig";
 import { UserService } from "modules/user/application/user.services.port";
 import { BcryptProviderPort } from "@shared/providers/interface/bcrypt.provider.port";
 import { JwtProviderPort } from "@shared/providers/interface/jwt.provider.port";
+import { MailProviderPort } from "@shared/providers/interface/mail.provider.port";
+import { generateNumericToken } from "@shared/utils/generate-numeric-token";
 
 export class AuthService implements AuthServicePort {
 
@@ -11,6 +13,7 @@ export class AuthService implements AuthServicePort {
         private readonly userService: UserService, 
         private readonly bcryptProvider: BcryptProviderPort,
         private readonly jwtProvider: JwtProviderPort,
+        private readonly mailProvider: MailProviderPort,
     ) {}
 
     public async register(input: RegisterInputDTO): Promise<AuthSessionDTO> {
@@ -99,13 +102,48 @@ export class AuthService implements AuthServicePort {
         }
     } 
 
-    //TODO Criar lógica de enviar email com token
     public async requestPasswordRecovery(email: string): Promise<void> {
+        const user = await this.userService.findByEmail(email);
 
+        if (!user) {
+            return;
+        }
+
+        const token = generateNumericToken(6);
+        const tokenHash = await this.bcryptProvider.hash(token);
+
+        user.requestPasswordReset(
+            tokenHash,
+            new Date(Date.now() + 10 * 60 * 1000)
+        );
+
+        await this.userService.updateUser(user);
+
+        await this.mailProvider.send(
+            user.getEmail(),
+            'Recuperação de senha', 
+            `
+            <p>Seu código de recuperação:</p>
+            <h2>${token}</h2>
+            <p>Esse código expira em 10 minutos.</p>
+            `
+        );
     }
 
-    //TODO Criar lógica para reset password
     public async resetPassword(input: ResetPasswordInputDTO): Promise<void> {
+        const user = await this.userService.findByEmail(input.email)
+        if(!user){throw new Error('Token inválido');}
+
+        const resetToken = user.getTokenReset();
+
+        if(!resetToken){throw new Error('Token inválido');}
+        if(resetToken.isExpired()) {throw new Error('Token inválido');}
+
+        const isTokenEquals =  await this.bcryptProvider.verify(input.token, resetToken.getHash())
+        if(!isTokenEquals){throw new Error('Token inválido');}
+        
         const newHash = await this.bcryptProvider.hash(input.newPassword);
+        user.resetPassword(newHash)
+        await this.userService.updateUser(user);
     }
 }

@@ -3,8 +3,10 @@ import { ChangeUserNameInput, ChangeUserPasswordInput, CreateUserInput } from ".
 
 export interface UserService {
   createUser(input: CreateUserInput): Promise<User>;
+  updateUser(data: User): Promise<User>;
   changeUserName(input: ChangeUserNameInput): Promise<void>;
   changeUserPassword(input: ChangeUserPasswordInput): Promise<void>;
   getUserById(userId: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
+  findByTokenPassword(token: string): Promise<User | null>;
 }

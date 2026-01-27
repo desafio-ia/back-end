@@ -23,6 +23,13 @@ export class UserServiceImpl implements UserService {
     return user
   }
 
+  async updateUser(data: User): Promise<User> {
+    const userExists = await this.userRepository.emailExists(data.getEmail())
+    if(!userExists){throw new Error('User not exists')}
+    await this.userRepository.save(data)
+    return data
+  }
+
   async changeUserName(input: ChangeUserNameInput): Promise<void> {
     const user = await this.userRepository.findById(input.userId)
 
@@ -50,5 +57,9 @@ export class UserServiceImpl implements UserService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findByEmail(email);
+  }
+
+  async findByTokenPassword(token: string): Promise<User | null> {
+    return this.userRepository.findByTokenPassword(token);
   }
 }

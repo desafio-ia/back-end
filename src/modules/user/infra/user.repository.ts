@@ -14,14 +14,17 @@ export class TypeOrmUserRepository implements UserRepository {
 
   async save(user: User): Promise<void> {
     const entity = UserMapper.toPersistence(user)
-
-    console.log(entity)
     await this.ormRepository.save(entity)
   }
 
   async update(user: User): Promise<void> {
     const entity = UserMapper.toPersistence(user)
     await this.ormRepository.save(entity)
+  }
+
+  async findByTokenPassword(tokenReset: string): Promise<User | null> {
+    const entity = await this.ormRepository.findOneBy({ password_reset_token_hash: tokenReset })
+    return entity ? UserMapper.toDomain(entity) : null
   }
 
   async findById(id: string): Promise<User | null> {
