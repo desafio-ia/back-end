@@ -14,7 +14,7 @@
     "baseUrl": "./src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["node", "express"],
+    "types": ["express"],
     "typeRoots": ["../node_modules/@types","./src/shared/types"],
     "paths": {
       "@domain/*": ["domain/*"],

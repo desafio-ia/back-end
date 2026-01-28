@@ -87,6 +87,59 @@ paths:
         401:
           description: Unauthorized (Invalid or missing token)
 
+  /auth/forgot-password:
+    post:
+      summary: Request password recovery email
+      description: Sends an email with a numeric token if the user exists.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        200:
+          description: Request processed (Email sent or ignored for security)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperationStatusResponse'
+        400:
+          description: Validation error (Email is required)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestErrorResponse'
+
+  /auth/change-password:
+    post:
+      summary: Reset password using recovery token
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        200:
+          description: Password reset successfully or business error occurred
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/OperationStatusResponse'
+                  - $ref: '#/components/schemas/ErrorResponse'
+        400:
+          description: Missing required fields (email, token or password)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
 components:
   securitySchemes:
     BearerAuth:
@@ -95,7 +148,6 @@ components:
       bearerFormat: JWT
 
   schemas:
-
     RegisterRequest:
       type: object
       required:
@@ -139,7 +191,6 @@ components:
           type: string
           description: The refresh token received during login
 
-
     UserProfileResponse:
       type: object
       properties:
@@ -167,3 +218,55 @@ components:
         refreshToken:
           type: string
           description: JWT Refresh Token (long lived)
+    
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+
+    ChangePasswordRequest:
+      type: object
+      required:
+        - email
+        - token
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "john@example.com"
+        token:
+          type: string
+          description: "Numeric 6-digit token received via email"
+          example: "123456"
+        password:
+          type: string
+          format: password
+          description: "The new password"
+          example: "NewStrongP@ssw0rd!"
+
+    OperationStatusResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Token inválido"
+
+    RequestErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Email not found"

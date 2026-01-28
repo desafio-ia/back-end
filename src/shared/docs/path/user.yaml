@@ -1,13 +1,13 @@
 openapi: 3.0.0
 info:
-  title: User API
+  title: User & Classification API
   version: 1.0.0
-  description: API para gerenciamento de usuários
+  description: API para gerenciamento de usuários e consulta de histórico de classificações.
 
 paths:
   /user:
     post:
-      summary: Create a new user
+      summary: Criar um novo usuário
       tags:
         - User
       requestBody:
@@ -15,21 +15,20 @@ paths:
         content:
           application/json:
             schema:
-              # Referência local simples
               $ref: '#/components/schemas/CreateUserRequest'
       responses:
         201:
-          description: User created successfully
+          description: Usuário criado com sucesso
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
         400:
-          description: Invalid input or email already in use
+          description: Entrada inválida ou e-mail já em uso
 
   /user/{id}:
     get:
-      summary: Get user by id
+      summary: Buscar usuário por ID
       tags:
         - User
       parameters:
@@ -41,17 +40,17 @@ paths:
             format: uuid
       responses:
         200:
-          description: User found
+          description: Usuário encontrado
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
         404:
-          description: User not found
+          description: Usuário não encontrado
 
   /user/{id}/name:
     patch:
-      summary: Change user name
+      summary: Alterar nome do usuário
       tags:
         - User
       parameters:
@@ -69,13 +68,39 @@ paths:
               $ref: '#/components/schemas/ChangeUserNameRequest'
       responses:
         204:
-          description: User name updated successfully
+          description: Nome atualizado com sucesso
         400:
-          description: Invalid input
+          description: Dados inválidos
         404:
-          description: User not found
-          
+          description: Usuário não encontrado
+
+  /user/classification/me:
+    get:
+      summary: Obter histórico do usuário autenticado
+      description: Retorna todas as classificações pertencentes ao usuário logado via Token.
+      tags:
+        - User
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Lista de classificações do usuário
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClassificationResponse'
+        401:
+          description: Não autorizado
+
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
     UserResponse:
       type: object
@@ -85,8 +110,11 @@ components:
           format: uuid
         name:
           type: string
+          example: "John Doe"
         email:
           type: string
+          format: email
+          example: "john@example.com"
 
     CreateUserRequest:
       type: object
@@ -97,10 +125,13 @@ components:
       properties:
         name:
           type: string
+          example: "John Doe"
         email:
           type: string
+          format: email
         password:
           type: string
+          format: password
 
     ChangeUserNameRequest:
       type: object
@@ -109,3 +140,23 @@ components:
       properties:
         name:
           type: string
+          example: "John New Name"
+
+    ClassificationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        nameSpecies:
+          type: string
+          example: "Rosa Rugosa"
+        confidence:
+          type: string
+          example: "98.50%"
+        classifiedAt:
+          type: string
+          format: date-time
+        modelId:
+          type: string
+          example: "vgg16-plant-v1"
