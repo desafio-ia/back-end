@@ -105,9 +105,7 @@ export class AuthService implements AuthServicePort {
     public async requestPasswordRecovery(email: string): Promise<void> {
         const user = await this.userService.findByEmail(email);
 
-        if (!user) {
-            return;
-        }
+        if (!user) {throw new Error('Email not found')}
 
         const token = generateNumericToken(6);
         const tokenHash = await this.bcryptProvider.hash(token);
@@ -121,11 +119,36 @@ export class AuthService implements AuthServicePort {
 
         await this.mailProvider.send(
             user.getEmail(),
-            'Recuperação de senha', 
+            'Recuperação de senha - Pokédex Unifor',
             `
-            <p>Seu código de recuperação:</p>
-            <h2>${token}</h2>
-            <p>Esse código expira em 10 minutos.</p>
+            <div style="font-family: Arial, sans-serif; background-color: #f9fafb; padding: 20px; color: #374151;">
+                <div style="max-width: 500px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;">
+                    
+                    <div style="background-color: #4f46e5; height: 6px; width: 100%;"></div>
+                    
+                    <div style="padding: 30px;">
+                        <h2 style="margin-top: 0; color: #111827; font-size: 20px; font-weight: bold;">Recuperação de Senha</h2>
+                        
+                        <p style="margin-bottom: 24px; color: #6b7280; font-size: 16px;">
+                            Você solicitou a recuperação de senha. Use o código abaixo para continuar:
+                        </p>
+
+                        <div style="background-color: #f3f4f6; border-radius: 6px; padding: 16px; text-align: center; margin-bottom: 24px;">
+                            <span style="font-size: 32px; font-weight: bold; letter-spacing: 4px; color: #4f46e5;">
+                                ${token}
+                            </span>
+                        </div>
+
+                        <p style="font-size: 14px; color: #9ca3af; margin-top: 30px;">
+                            Esse código expira em 10 minutos. Se você não solicitou isso, ignore este email.
+                        </p>
+                    </div>
+                    
+                    <div style="background-color: #f9fafb; padding: 15px; text-align: center; border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af;">
+                        &copy; 2024 Sua Empresa. Todos os direitos reservados.
+                    </div>
+                </div>
+            </div>
             `
         );
     }
@@ -142,7 +165,7 @@ export class AuthService implements AuthServicePort {
         const isTokenEquals =  await this.bcryptProvider.verify(input.token, resetToken.getHash())
         if(!isTokenEquals){throw new Error('Token inválido');}
         
-        const newHash = await this.bcryptProvider.hash(input.newPassword);
+        const newHash = await this.bcryptProvider.hash(input.password);
         user.resetPassword(newHash)
         await this.userService.updateUser(user);
     }

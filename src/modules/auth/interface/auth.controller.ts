@@ -89,18 +89,17 @@ export class AuthController {
     }
 
     public async resetPassword(req: Request, res: Response) {
-        const {email, token, newPassword} = req.body;
+        const {email, token, password} = req.body;
 
         if(!email) {return res.status(400).json({ error:"Email is required"})};
         if(!token) {return res.status(400).json({ error:"token is required"})};
-        if(!newPassword) {return res.status(400).json({ error:"Password is required"})};
+        if(!password) {return res.status(400).json({ error:"Password is required"})};
 
         try {
-            await this.authService.resetPassword({email, token, newPassword});
+            await this.authService.resetPassword({email, token, password});
             return res.status(200).json({ ok: true });
         } catch(error: any) {
             return res.status(200).json({ error: error.message });
         }
     }
-
 }

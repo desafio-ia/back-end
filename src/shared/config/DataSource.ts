@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { DataSource } from 'typeorm'
 import { UserOrmEntity } from '../../modules/user/infra/user.orm-entity'
 import * as dotenv from 'dotenv';
+import { ClassificationEntity } from 'modules/classification/infra/classification.entity';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ export const AppDataSource = new DataSource({
 
   entities: [
     UserOrmEntity,
+    ClassificationEntity,
   ],
 })
 

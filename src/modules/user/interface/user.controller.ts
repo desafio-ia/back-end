@@ -1,12 +1,16 @@
 import { Request, Response } from 'express'
 import { UserService } from '../application/user.services.port'
+import { ClassificationServicePort } from 'modules/classification/application/classification.service.port'
 
 type Params = {
   id: string
 }
 
 export class UserController {
-  constructor(private readonly userService: UserService){}
+  constructor(
+    private readonly userService: UserService,
+    private readonly classificationService: ClassificationServicePort
+  ){}
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
@@ -84,6 +88,26 @@ export class UserController {
       return res.status(204).send()
     } catch (error: any) {
       return res.status(400).json({ message: error.message })
+    }
+  }
+
+  async getHistory(req: Request, res: Response) {
+    try {
+      const userId = req.userId;
+      if(!userId) return res.status(404).json({ message: 'required user id.' });
+
+      const history = await this.classificationService.getUserHistory(userId);
+
+      return res.json(
+        history.map((item) => ({
+          id: item.id,
+          nameSpecies: item.nameSpecies,
+          confidence: item.getFormattedConfidence(),
+          classifiedAt: item.classifiedAt,
+        }))
+      );
+    } catch (error: any) {
+      return res.status(400).json({ message: error.message });
     }
   }
 }

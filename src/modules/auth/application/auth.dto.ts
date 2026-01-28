@@ -33,7 +33,7 @@ export type ValidateResponseDTO = {
 export type ResetPasswordInputDTO = {
     email: string,
     token: string;
-    newPassword: string; 
+    password: string; 
 };
 
 export type TokenPayloadDTO = {

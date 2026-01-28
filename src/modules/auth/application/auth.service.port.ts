@@ -1,4 +1,3 @@
-import { AuthConfig } from "../domain/AuthConfig";
 import { AuthSessionDTO, LoginInputDTO, RegisterInputDTO, ResetPasswordInputDTO } from "./auth.dto";
 
 export interface AuthServicePort {
