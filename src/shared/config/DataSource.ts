@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm'
 import { UserOrmEntity } from '../../modules/user/infra/user.orm-entity'
 import * as dotenv from 'dotenv';
 import { ClassificationEntity } from 'modules/classification/infra/classification.entity';
+import { AIModelEvaluationEntity } from 'modules/AI-model/infra/model-evaluation.entity';
+import { AIModelEntity } from 'modules/AI-model/infra/ai-model.entity';
 
 dotenv.config();
 
@@ -27,6 +29,9 @@ export const AppDataSource = new DataSource({
   entities: [
     UserOrmEntity,
     ClassificationEntity,
+    AIModelEntity,
+    AIModelEvaluationEntity,
+
   ],
 })
 
