@@ -1,0 +1,168 @@
+openapi: 3.0.0
+info:
+  title: AI Model & User API
+  version: 1.0.0
+  description: API para gerenciamento de usuários, modelos de IA e avaliações de métricas.
+
+paths:
+  /user:
+    post:
+      summary: Criar um novo usuário
+      tags: [User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        201:
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  # --- Rotas de Modelos de IA (Novas) ---
+  /models:
+    post:
+      summary: Registrar um novo modelo de IA
+      tags: [AI Model]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateModelRequest'
+      responses:
+        201:
+          description: Modelo registrado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIModelResponse'
+
+  /models/{id}:
+    get:
+      summary: Buscar modelo por ID
+      tags: [AI Model]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Dados do modelo retornados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIModelResponse'
+        404:
+          description: Modelo não encontrado
+
+  /models/evaluate:
+    post:
+      summary: Adicionar uma nova avaliação ao modelo
+      tags: [AI Model]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEvaluationRequest'
+      responses:
+        201:
+          description: Avaliação registrada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvaluationResponse'
+
+  /models/{id}/evaluations:
+    get:
+      summary: Listar todas as avaliações de um modelo específico
+      tags: [AI Model]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do modelo
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Lista de avaliações
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EvaluationResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # --- User Schemas ---
+    UserResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: "John Doe" }
+        email: { type: string, format: email }
+
+    CreateUserRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+
+    # --- AI Model Schemas ---
+    AIModelResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string, example: "ResNet-50-v2" }
+        framework: { type: string, example: "PyTorch" }
+        trainedAt: { type: string, format: date-time }
+
+    CreateModelRequest:
+      type: object
+      required: [name, framework]
+      properties:
+        name: { type: string, example: "ResNet-50-v2" }
+        framework: { type: string, example: "PyTorch" }
+        trainedAt: { type: string, format: date-time }
+
+    AddEvaluationRequest:
+      type: object
+      required: [modelId, datasetName, metrics]
+      properties:
+        modelId: { type: string, format: uuid }
+        datasetName: { type: string, example: "ImageNet-Test-Set" }
+        evaluationDate: { type: string, format: date-time }
+        metrics:
+          type: object
+          additionalProperties: { type: number }
+          example: { accuracy: 0.95, f1_score: 0.92 }
+
+    EvaluationResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        modelId: { type: string, format: uuid }
+        datasetName: { type: string }
+        evaluationDate: { type: string, format: date-time }
+        metrics:
+          type: object
+          additionalProperties: { type: number }

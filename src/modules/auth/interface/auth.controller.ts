@@ -59,15 +59,13 @@ export class AuthController {
     public async refreshToken(req: Request, res: Response): Promise<Response> {
         try {
             const { refreshToken } = req.body;
-            const userId = req.userId;
             
-            if (!refreshToken || !userId) {
+            if (!refreshToken) {
                 let error_mensage = !refreshToken ? 'Refresh token is required;' : ''
-                error_mensage +=  !userId? 'User id is required;' : ''
                 return res.status(400).json({ error:"Erro:" + error_mensage });
             }  
 
-            const tokens = await this.authService.refreshToken(userId, refreshToken);
+            const tokens = await this.authService.refreshToken(refreshToken);
             return res.status(200).json(tokens);
 
         } catch (error: any) {

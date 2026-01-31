@@ -86,15 +86,15 @@ export class AuthService implements AuthServicePort {
         }
     }
 
-    public async refreshToken(userIdActual: string, refreshToken: string):Promise<RefreshOutputDTO> {
+    public async refreshToken(refreshToken: string):Promise<RefreshOutputDTO> {
         const isRefreshToken = this.jwtProvider.verifyRefreshToken(refreshToken);
         if(!isRefreshToken){throw new Error('Token inválido');}
         
         const decode = this.jwtProvider.decodeToken(refreshToken)
-        if(userIdActual !== decode?.userId){throw new Error('Token inválido')}
+        if(!decode){throw new Error('Token inválido')}
 
-        const refresh_Token = await this.jwtProvider.generateRefreshToken({userId:decode?.userId})
-        const Access_Token = await this.jwtProvider.generateAccessToken({userId: decode?.userId})
+        const refresh_Token = await this.jwtProvider.generateRefreshToken({userId:decode.userId})
+        const Access_Token = await this.jwtProvider.generateAccessToken({userId: decode.userId})
 
         return {
             refreshToken: refresh_Token,

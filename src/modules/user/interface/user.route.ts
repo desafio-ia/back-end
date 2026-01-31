@@ -2,9 +2,9 @@ import { Router } from 'express'
 import { UserController } from './user.controller'
 import { UserServiceImpl } from '../application/user.service'
 import { TypeOrmUserRepository } from '../infra/user.repository'
-import { ClassificationController } from 'modules/classification/interface/classification.controller'
 import { ClassificationRepository } from 'modules/classification/infra/classification.repository'
 import { ClassificationService } from 'modules/classification/application/classification.service'
+
 const router = Router()
 
 const userRepository = new TypeOrmUserRepository()
