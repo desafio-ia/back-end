@@ -19,6 +19,12 @@ export type AuthSessionDTO = {
     accessToken: string
 };
 
+export type MeResponseDto = {
+    id: string
+    name: string
+    email: string
+}
+
 export type RefreshOutputDTO = {
     refreshToken: string,
     accessToken: string,

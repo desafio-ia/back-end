@@ -1,4 +1,4 @@
-import {AuthSessionDTO, LoginInputDTO, RefreshOutputDTO, RegisterInputDTO, ResetPasswordInputDTO } from "./auth.dto";
+import {AuthSessionDTO, LoginInputDTO, MeResponseDto, RefreshOutputDTO, RegisterInputDTO, ResetPasswordInputDTO } from "./auth.dto";
 import { AuthServicePort } from "./auth.service.port";
 import { AuthConfig } from "../domain/AuthConfig";
 import { UserService } from "modules/user/application/user.services.port";
@@ -69,20 +69,14 @@ export class AuthService implements AuthServicePort {
         }
     }
 
-    public async me(userId: string): Promise<AuthSessionDTO> {
+    public async me(userId: string): Promise<MeResponseDto> {
         const user = await this.userService.getUserById(userId);
         if (!user) throw new Error('Usuário não encontrado');
 
-        const refreshToken = await this.jwtProvider.generateRefreshToken({userId: user.id})
-        const AccessToken = await this.jwtProvider.generateAccessToken({userId: user.id})
-
         return {
-            user: {
-                name: user.getName(),
-                email: user.getEmail(),
-            },
-            refreshToken:refreshToken,
-            accessToken: AccessToken,
+           id: user.id,
+           name: user.getName(),
+           email: user.getEmail(),
         }
     }
 
