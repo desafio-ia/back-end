@@ -16,12 +16,12 @@ export type AuthSessionDTO = {
         email: string;
     },
     refreshToken: string;
-    AcessToken: string
+    accessToken: string
 };
 
 export type RefreshOutputDTO = {
     refreshToken: string,
-    AcessToken: string,
+    accessToken: string,
 }
 
 export type ValidateResponseDTO = {

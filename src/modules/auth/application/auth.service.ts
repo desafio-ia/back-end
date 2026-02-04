@@ -42,7 +42,7 @@ export class AuthService implements AuthServicePort {
                     email: createdUser.getEmail(),
                 },
                 refreshToken: refreshToken,
-                AcessToken: AccessToken,
+                accessToken: AccessToken,
             }
         } catch (error: any) {
             throw new Error(error.message || "Erro ao registrar usuário");
@@ -65,7 +65,7 @@ export class AuthService implements AuthServicePort {
                 email: user.getEmail(),
             },
             refreshToken: refreshToken,
-            AcessToken: AccessToken,
+            accessToken: AccessToken,
         }
     }
 
@@ -82,7 +82,7 @@ export class AuthService implements AuthServicePort {
                 email: user.getEmail(),
             },
             refreshToken:refreshToken,
-            AcessToken: AccessToken,
+            accessToken: AccessToken,
         }
     }
 
@@ -98,7 +98,7 @@ export class AuthService implements AuthServicePort {
 
         return {
             refreshToken: refresh_Token,
-            AcessToken: Access_Token,
+            accessToken: Access_Token,
         }
     } 
 
