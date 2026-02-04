@@ -66,6 +66,6 @@ export class Classification {
   }
 
   public getFormattedConfidence(): string {
-    return `${this.props.confidence.toFixed(2)}%`;
+    return `${(this.props.confidence * 100).toFixed(1)}%`;
   }
 }

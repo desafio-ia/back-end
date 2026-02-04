@@ -6,5 +6,5 @@ export interface ClassificationServicePort {
   getById(id: string): Promise<Classification>;
   getUserHistory(userId: string): Promise<Classification[]>;
   deleteClassification(id: string): Promise<void>;
-  analyzeImage(imageBuffer: Buffer): Promise<{nameSpecies: string;confidence: number;modelId:string;}>;
+  analyzeImage(imageBuffer: Buffer): Promise<{    nameSpecies: string;confidence: number; modelId: string;}>;
 }

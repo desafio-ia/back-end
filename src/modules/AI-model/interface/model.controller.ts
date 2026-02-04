@@ -11,14 +11,14 @@ export class ModelController {
 
   async register(req: Request, res: Response): Promise<Response> {
     try {
-      const { name, framework, trainedAt } = req.body;
+      const { id, framework, trainedAt } = req.body;
 
-      if (!name || !framework) {
+      if (!id || !framework) {
         return res.status(400).json({ message: 'Nome e framework são obrigatórios.' });
       }
 
       const model = await this.modelService.registerModel({
-        name,
+        id,
         framework,
         trainedAt: trainedAt ? new Date(trainedAt) : new Date(),
       });

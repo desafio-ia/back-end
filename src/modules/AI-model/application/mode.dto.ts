@@ -1,5 +1,5 @@
 export interface CreateModelCommand {
-  name: string;
+  id: string;
   framework: string;
   trainedAt: Date;
 }

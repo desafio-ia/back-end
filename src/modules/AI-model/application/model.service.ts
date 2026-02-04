@@ -13,8 +13,7 @@ export class ModelService implements ModelServicePort {
 
   async registerModel(command: CreateModelCommand): Promise<AIModel> {
     const newModel = new AIModel({
-      id: randomUUID(),
-      name: command.name,
+      id: command.id,
       framework: command.framework,
       trainedAt: command.trainedAt,
     });

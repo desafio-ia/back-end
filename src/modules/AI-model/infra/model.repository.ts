@@ -9,7 +9,7 @@ import { ModelEvaluation } from "../domain/model-evaluation.domain";
 import { ModelEvaluationMapper } from "./model-evaluation.mapper";
 
 export class TypeOrmModelRepository implements ModelRepositoryPort {
-    
+  
   private modelRepo: Repository<AIModelEntity>;
   private evaluationRepo: Repository<AIModelEvaluationEntity>;
 

@@ -2,11 +2,8 @@ import { Column, Entity, PrimaryColumn } from "typeorm"
 
 @Entity('ai_model')
 export class AIModelEntity {
-  @PrimaryColumn('uuid')
+  @PrimaryColumn('varchar')
   id!: string;
-
-  @Column()
-  name!: string;
 
   @Column({ unique: true })
   framework!: string;
