@@ -5,7 +5,7 @@ export class ClassificationMapper {
   static toDomain(entity: ClassificationEntity): Classification {
     return Classification.restore(entity.id, {
       userId: entity.userId,
-      nameSpecies: entity.nameSpecies,
+      species: entity.nameSpecies,
       modelId: entity.modelId,
       confidence: Number(entity.confidence),
       classifiedAt: entity.classifiedAt,
@@ -16,7 +16,7 @@ export class ClassificationMapper {
     const entity = new ClassificationEntity();
     entity.id = domain.id;
     entity.userId = domain.userId;
-    entity.nameSpecies = domain.nameSpecies;
+    entity.nameSpecies = domain.species;
     entity.modelId = domain.modelId;
     entity.confidence = domain.confidence;
     entity.classifiedAt = domain.classifiedAt;

@@ -3,27 +3,29 @@ import { Classification } from "../domain/classification.domain";
 import { ClassificationRepositoryPort } from "../infra/classification.repository.port";
 import { ClassificationServicePort } from "./classification.service.port";
 import FormData from "form-data";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import { ModelRepositoryPort } from "modules/AI-model/infra/model.repository.port";
 
 export class ClassificationService implements ClassificationServicePort {
-    
-  private URL_MICROSERVICE = "http://127.0.0.1:5000"
+  private URL_MICROSERVICE = "http://127.0.0.1:5000";
 
   constructor(
     private readonly repository: ClassificationRepositoryPort,
     private readonly repoModel: ModelRepositoryPort,
   ) {}
 
-  async classifyImage(data: { userId: string, imageBuffer: Buffer }): Promise<Classification> {
+  async classifyImage(data: {
+    userId: string;
+    imageBuffer: Buffer;
+  }): Promise<Classification> {
     const aiResult = await this.analyzeImage(data.imageBuffer);
-    console.log(aiResult)
+    console.log(aiResult);
 
     await this.ensureModelExists(aiResult.modelId);
 
     const classification = Classification.create({
       userId: data.userId,
-      nameSpecies: aiResult.nameSpecies,
+      species: aiResult.nameSpecies,
       modelId: aiResult.modelId,
       confidence: aiResult.confidence,
     });
@@ -38,11 +40,11 @@ export class ClassificationService implements ClassificationServicePort {
     if (!modelInDb) {
       const [modelRes, evalRes] = await Promise.all([
         axios.get(`${this.URL_MICROSERVICE}/model`),
-        axios.get(`${this.URL_MICROSERVICE}/model/evaluation`)
+        axios.get(`${this.URL_MICROSERVICE}/model/evaluation`),
       ]);
 
       await this.repoModel.save({ ...modelRes.data });
-      
+
       const evaluationData = {
         id: uuidv4(),
         model_id: modelId,
@@ -51,7 +53,7 @@ export class ClassificationService implements ClassificationServicePort {
         precision: evalRes.data.metrics.precision,
         recall: evalRes.data.metrics.recall,
         f1_score: evalRes.data.metrics.f1_score,
-        evaluation_date: evalRes.data.evaluation_date
+        evaluation_date: evalRes.data.evaluation_date,
       };
 
       await this.repoModel.saveEvaluation(evaluationData);
@@ -61,7 +63,7 @@ export class ClassificationService implements ClassificationServicePort {
   async getById(id: string): Promise<Classification> {
     const classification = await this.repository.findById(id);
     if (!classification) {
-      throw new Error('Classificação não encontrada');
+      throw new Error("Classificação não encontrada");
     }
     return classification;
   }
@@ -74,13 +76,19 @@ export class ClassificationService implements ClassificationServicePort {
     await this.repository.delete(id);
   }
 
-  async analyzeImage(imageBuffer: Buffer): Promise<{nameSpecies: string;confidence: number; modelId: string;}> {
+  async analyzeImage(
+    imageBuffer: Buffer,
+  ): Promise<{ nameSpecies: string; confidence: number; modelId: string }> {
     const formData = new FormData();
     formData.append("image", imageBuffer, { filename: "image.jpg" });
 
-    const response = await axios.post("http://127.0.0.1:5000/predict", formData, {
-      headers: formData.getHeaders(),
-    });
+    const response = await axios.post(
+      "http://127.0.0.1:5000/predict",
+      formData,
+      {
+        headers: formData.getHeaders(),
+      },
+    );
 
     return response.data;
   }

@@ -1,110 +1,110 @@
-import { Request, Response } from 'express'
-import { UserService } from '../application/user.services.port'
-import { ClassificationServicePort } from 'modules/classification/application/classification.service.port'
+import { Request, Response } from "express";
+import { UserService } from "../application/user.services.port";
+import { ClassificationServicePort } from "modules/classification/application/classification.service.port";
 
 type Params = {
-  id: string
-}
+  id: string;
+};
 
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly classificationService: ClassificationServicePort
-  ){}
+    private readonly classificationService: ClassificationServicePort,
+  ) {}
 
   async create(req: Request, res: Response): Promise<Response> {
     try {
-      const { name, email, password } = req.body
+      const { name, email, password } = req.body;
 
       const user = await this.userService.createUser({
         id: crypto.randomUUID(),
         name,
         email,
-        passwordHash: password
-      })
+        passwordHash: password,
+      });
 
       return res.status(201).json({
         id: user.id,
         name: user.getName(),
-        email: user.getEmail()
-      })
-      
+        email: user.getEmail(),
+      });
     } catch (error: any) {
-      return res.status(400).json({ message: error.message })
+      return res.status(400).json({ message: error.message });
     }
   }
 
   async getById(req: Request<Params>, res: Response): Promise<Response> {
     try {
-      const { id } = req.params
+      const { id } = req.params;
 
-      const user = await this.userService.getUserById(id)
+      const user = await this.userService.getUserById(id);
 
       if (!user) {
-        return res.status(404).json({ message: 'User not found' })
+        return res.status(404).json({ message: "User not found" });
       }
 
       return res.json({
         id: user.id,
         name: user.getName(),
-        email: user.getEmail()
-      })
+        email: user.getEmail(),
+      });
     } catch (error: any) {
-      return res.status(500).json({ message: 'Internal server error' })
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 
   async changeName(req: Request<Params>, res: Response): Promise<Response> {
     try {
-      const { id } = req.params
-      const { name } = req.body
+      const { id } = req.params;
+      const { name } = req.body;
 
       await this.userService.changeUserName({
         userId: id,
-        newName: name
-      })
+        newName: name,
+      });
 
       const user = res.json({
         id: id,
-        name: name
-      })
+        name: name,
+      });
 
-      return res.status(204).send(user)
+      return res.status(204).send(user);
     } catch (error: any) {
-      return res.status(400).json({ message: error.message })
+      return res.status(400).json({ message: error.message });
     }
   }
 
   async changePassword(req: Request<Params>, res: Response): Promise<Response> {
     try {
-      const { id } = req.params
-      const { password } = req.body
+      const { id } = req.params;
+      const { password } = req.body;
 
       await this.userService.changeUserPassword({
         userId: id,
-        newPasswordHash: password 
-      })
+        newPasswordHash: password,
+      });
 
-      return res.status(204).send()
+      return res.status(204).send();
     } catch (error: any) {
-      return res.status(400).json({ message: error.message })
+      return res.status(400).json({ message: error.message });
     }
   }
 
   async getHistory(req: Request, res: Response) {
     try {
       const userId = req.userId;
-      if(!userId) return res.status(404).json({ message: 'required user id.' });
+      if (!userId)
+        return res.status(404).json({ message: "required user id." });
 
       const history = await this.classificationService.getUserHistory(userId);
 
       return res.json(
         history.map((item) => ({
           id: item.id,
-          nameSpecies: item.nameSpecies,
+          species: item.species,
           confidence: item.getFormattedConfidence(),
           classifiedAt: item.classifiedAt,
-        }))
+        })),
       );
     } catch (error: any) {
       return res.status(400).json({ message: error.message });

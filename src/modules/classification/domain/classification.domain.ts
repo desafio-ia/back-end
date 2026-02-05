@@ -1,11 +1,11 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from "node:crypto";
 
 export interface ClassificationProps {
   userId: string;
-  nameSpecies: string;
+  species: string;
   modelId: string;
   confidence: number;
-  classifiedAt?: Date; 
+  classifiedAt?: Date;
 }
 
 export class Classification {
@@ -27,7 +27,10 @@ export class Classification {
     return instance;
   }
 
-  public static restore(id: string, props: ClassificationProps): Classification {
+  public static restore(
+    id: string,
+    props: ClassificationProps,
+  ): Classification {
     return new Classification(props, id);
   }
 
@@ -39,8 +42,8 @@ export class Classification {
     return this.props.userId;
   }
 
-  public get nameSpecies(): string {
-    return this.props.nameSpecies;
+  public get species(): string {
+    return this.props.species;
   }
 
   public get modelId(): string {
@@ -57,15 +60,17 @@ export class Classification {
 
   private validate() {
     if (this.props.confidence < 0 || this.props.confidence > 100) {
-      throw new Error('A confiança deve estar entre 0 e 100 (ou 0 e 1 dependendo da sua regra).');
+      throw new Error(
+        "A confiança deve estar entre 0 e 100 (ou 0 e 1 dependendo da sua regra).",
+      );
     }
 
-    if (!this.props.nameSpecies || this.props.nameSpecies.trim().length === 0) {
-      throw new Error('O nome da espécie é obrigatório.');
+    if (!this.props.species || this.props.species.trim().length === 0) {
+      throw new Error("O nome da espécie é obrigatório.");
     }
   }
 
-  public getFormattedConfidence(): string {
-    return `${(this.props.confidence * 100).toFixed(1)}%`;
+  public getFormattedConfidence(): number {
+    return this.props.confidence * 100;
   }
 }
