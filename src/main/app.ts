@@ -6,10 +6,12 @@ import { authRoutes } from 'modules/auth/interface/auth.routes';
 import { ensureAuthenticated } from '@shared/middleware/ensureAuthenticated';
 import { classificationRoutes } from 'modules/classification/interface/classification.route';
 import { modelRoutes } from 'modules/AI-model/interface/model.routes';
+const cors = require('cors')
 
 export default async function buildApp() {
   const app = express();
   app.use(express.json())
+  app.use(cors())
 
   app.use('/models',[ensureAuthenticated], modelRoutes)
   app.use('/classification', [ensureAuthenticated], classificationRoutes)
