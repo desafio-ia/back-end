@@ -30,7 +30,7 @@ export class AuthController {
             return res.status(200).json(session);
 
         } catch (error: any) {
-            const status = error.message === 'Credenciais inválidas.' ? 401 : 400;
+            const status = error.message === 'Invalid credential' ? 401 : 400;
 
             return res.status(status).json({ 
                 error: 'Login failed', 

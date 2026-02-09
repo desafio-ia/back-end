@@ -26,7 +26,7 @@ export class AuthConfig {
 
     private validateName(name: string): void {
         if (!name || name.trim().length < 3) {
-            throw new Error('O nome deve ter no mínimo 3 caracteres.');
+            throw new Error('The name must be at least 3 characters long.');
         }
     }
 
@@ -34,7 +34,7 @@ export class AuthConfig {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         
         if (!emailRegex.test(email)) {
-            throw new Error('O formato do e-mail é inválido.');
+            throw new Error('The email format is invalid.');
         }
     }
 
@@ -46,11 +46,11 @@ export class AuthConfig {
         const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
         if (password.length < minLength) {
-            throw new Error(`A senha deve ter pelo menos ${minLength} caracteres.`);
+            throw new Error(`The password must be at least ${minLength} characters long.`);
         }
         
         if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
-             throw new Error('A senha deve conter: maiúscula, minúscula, número e caractere especial.');
+             throw new Error('The password must contain: an uppercase letter, a lowercase letter, a number, and a special character.');
         }
     }
 }

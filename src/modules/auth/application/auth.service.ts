@@ -45,16 +45,16 @@ export class AuthService implements AuthServicePort {
                 accessToken: AccessToken,
             }
         } catch (error: any) {
-            throw new Error(error.message || "Erro ao registrar usuário");
+            throw new Error(error.message || "Register user failed");
         }
     }
 
     public async login(credentials: LoginInputDTO): Promise<AuthSessionDTO> {
         const user = await this.userService.findByEmail(credentials.email);
-        if (!user) throw new Error('Credenciais inválidas.');
+        if (!user) throw new Error('Invalid credential');
 
         const isPasswordValid = await this.bcryptProvider.verify(credentials.password, user.getPassword());
-        if (!isPasswordValid) throw new Error('Credenciais inválidas.');
+        if (!isPasswordValid) throw new Error('Invalid credential');
 
         const refreshToken = await this.jwtProvider.generateRefreshToken({userId: user.id})
         const AccessToken = await this.jwtProvider.generateAccessToken({userId: user.id})
@@ -71,7 +71,7 @@ export class AuthService implements AuthServicePort {
 
     public async me(userId: string): Promise<MeResponseDto> {
         const user = await this.userService.getUserById(userId);
-        if (!user) throw new Error('Usuário não encontrado');
+        if (!user) throw new Error('User not found');
 
         return {
            id: user.id,
@@ -82,10 +82,10 @@ export class AuthService implements AuthServicePort {
 
     public async refreshToken(refreshToken: string):Promise<RefreshOutputDTO> {
         const isRefreshToken = this.jwtProvider.verifyRefreshToken(refreshToken);
-        if(!isRefreshToken){throw new Error('Token inválido');}
+        if(!isRefreshToken){throw new Error('Token invalid');}
         
         const decode = this.jwtProvider.decodeToken(refreshToken)
-        if(!decode){throw new Error('Token inválido')}
+        if(!decode){throw new Error('Token invalid')}
 
         const refresh_Token = await this.jwtProvider.generateRefreshToken({userId:decode.userId})
         const Access_Token = await this.jwtProvider.generateAccessToken({userId: decode.userId})
@@ -149,15 +149,15 @@ export class AuthService implements AuthServicePort {
 
     public async resetPassword(input: ResetPasswordInputDTO): Promise<void> {
         const user = await this.userService.findByEmail(input.email)
-        if(!user){throw new Error('Token inválido');}
+        if(!user){throw new Error('Token invalid');}
 
         const resetToken = user.getTokenReset();
 
-        if(!resetToken){throw new Error('Token inválido');}
-        if(resetToken.isExpired()) {throw new Error('Token inválido');}
+        if(!resetToken){throw new Error('Token invalid');}
+        if(resetToken.isExpired()) {throw new Error('Token invalid');}
 
         const isTokenEquals =  await this.bcryptProvider.verify(input.token, resetToken.getHash())
-        if(!isTokenEquals){throw new Error('Token inválido');}
+        if(!isTokenEquals){throw new Error('Token invalid');}
         
         const newHash = await this.bcryptProvider.hash(input.password);
         user.resetPassword(newHash)
