@@ -38,7 +38,7 @@ export class ClassificationService implements ClassificationServicePort {
 
     const classification = Classification.create({
       userId: data.userId,
-      species: aiResult.confidence >= 0.50 ? aiResult.nameSpecies : "undefined",
+      species: aiResult.nameSpecies,
       modelId: aiResult.modelId,
       confidence: aiResult.confidence,
     });
