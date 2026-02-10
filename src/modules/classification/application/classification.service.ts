@@ -10,7 +10,6 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 export class ClassificationService implements ClassificationServicePort {
-  
   private URL_MICROSERVICE = this.getEnv("URL_MICROSERVICE");
 
   constructor(
@@ -95,7 +94,7 @@ export class ClassificationService implements ClassificationServicePort {
     formData.append("image", imageBuffer, { filename: "image.jpg" });
 
     const response = await axios.post(
-      "http://127.0.0.1:5000/predict",
+      `${this.URL_MICROSERVICE}/predict`,
       formData,
       {
         headers: formData.getHeaders(),
