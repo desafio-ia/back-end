@@ -5,14 +5,26 @@ import { ClassificationServicePort } from "./classification.service.port";
 import FormData from "form-data";
 import { v4 as uuidv4 } from "uuid";
 import { ModelRepositoryPort } from "modules/AI-model/infra/model.repository.port";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 export class ClassificationService implements ClassificationServicePort {
-  private URL_MICROSERVICE = "http://127.0.0.1:5000";
+  
+  private URL_MICROSERVICE = this.getEnv("URL_MICROSERVICE");
 
   constructor(
     private readonly repository: ClassificationRepositoryPort,
     private readonly repoModel: ModelRepositoryPort,
   ) {}
+
+  private getEnv(name: string): string {
+    const value = process.env[name];
+    if (!value) {
+      throw new Error(`Environment variable ${name} is not defined`);
+    }
+    return value;
+  }
 
   async classifyImage(data: {
     userId: string;
