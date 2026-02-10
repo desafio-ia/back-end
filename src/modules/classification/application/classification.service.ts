@@ -34,9 +34,11 @@ export class ClassificationService implements ClassificationServicePort {
 
     await this.ensureModelExists(aiResult.modelId);
 
+
+
     const classification = Classification.create({
       userId: data.userId,
-      species: aiResult.nameSpecies,
+      species: aiResult.confidence >= 0.50 ? aiResult.nameSpecies : "undefined",
       modelId: aiResult.modelId,
       confidence: aiResult.confidence,
     });
